@@ -37,7 +37,23 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'products',
+    'rest_framework',
+ 
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',  # Session-based login
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',  # Ensure only authenticated users can access
+    ],
+}
+
+
+LOGIN_REDIRECT_URL = 'http://127.0.0.1:8000/api/products/'  # Redirect to the admin panel
+LOGOUT_REDIRECT_URL = '/auth/login/'  # Redirect to login page URL
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
