@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import viewsets, permissions
@@ -7,6 +7,8 @@ from .models import Product, Category
 from .serializers import ProductSerializer, CategorySerializer, UserSerializer, RegisterSerializer
 from django.contrib.auth.models import User
 from rest_framework.views import APIView
+from rest_framework.authentication import SessionAuthentication
+
 
 
 # Create your views here.
@@ -14,6 +16,7 @@ from rest_framework.views import APIView
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    authentication_classes = [SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     
     def get_queryset(self):
@@ -25,6 +28,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    authentication_classes = [SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
@@ -36,6 +40,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
 
 class RegisterView(APIView):
@@ -47,3 +52,4 @@ class RegisterView(APIView):
             serializer.save()
             return Response({'message': 'User registered successfully'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
