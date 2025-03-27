@@ -10,7 +10,8 @@ from rest_framework.views import APIView
 from rest_framework.authentication import SessionAuthentication
 from django_filters.rest_framework import DjangoFilterBackend
 from .filters import ProductFilter
-from rest_framework.filters import SearchFilter
+from rest_framework.filters import SearchFilter,OrderingFilter
+from .pagination import ProductPagination  # Import custom pagination
 
 
 
@@ -21,7 +22,9 @@ class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = ProductFilter 
+    pagination_class = ProductPagination  # Apply pagination
     search_fields = ['name', 'price']
+    ordering_fields = ['price', 'created_at']  # Enable sorting by price and creation date
     authentication_classes = [SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     
