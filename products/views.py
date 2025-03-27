@@ -8,6 +8,9 @@ from .serializers import ProductSerializer, CategorySerializer, UserSerializer, 
 from django.contrib.auth.models import User
 from rest_framework.views import APIView
 from rest_framework.authentication import SessionAuthentication
+from django_filters.rest_framework import DjangoFilterBackend
+from .filters import ProductFilter
+from rest_framework.filters import SearchFilter
 
 
 
@@ -16,6 +19,9 @@ from rest_framework.authentication import SessionAuthentication
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filterset_class = ProductFilter 
+    search_fields = ['name', 'price']
     authentication_classes = [SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     
@@ -74,7 +80,7 @@ class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     authentication_classes = [SessionAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
+    #permission_classes = [permissions.IsAuthenticated]
 
 
 # Order Item ViewSet
