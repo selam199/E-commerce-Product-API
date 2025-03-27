@@ -53,7 +53,7 @@ REST_FRAMEWORK = {
 
 
 LOGIN_REDIRECT_URL = 'http://127.0.0.1:8000/api/products/'  # Redirect to the admin panel
-LOGOUT_REDIRECT_URL = '/auth/login/'  # Redirect to login page URL
+LOGOUT_REDIRECT_URL = '/auth/'  # Redirect to login page URL
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
