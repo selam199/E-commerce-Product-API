@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework import viewsets, permissions
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from .models import Product, Category,Cart, CartItem, Order, OrderItem
 from .serializers import ProductSerializer, CategorySerializer, UserSerializer, RegisterSerializer,CartSerializer, CartItemSerializer, OrderSerializer, OrderItemSerializer
 from django.contrib.auth.models import User
@@ -50,7 +50,7 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated] 
 # Register API Methods
 class RegisterView(APIView):
     permission_classes = [AllowAny]  # Temporarily allow unauthenticated users
