@@ -20,11 +20,11 @@ from .pagination import ProductPagination  # Import custom pagination
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_class = ProductFilter 
     pagination_class = ProductPagination  # Apply pagination
-    search_fields = ['name', 'price']
-    ordering_fields = ['price', 'created_at']  # Enable sorting by price and creation date
+    search_fields = ['name','description']
+    ordering_fields = ['price', 'created_by']  # Enable sorting by price and creation date
     authentication_classes = [SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     
@@ -83,7 +83,7 @@ class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     authentication_classes = [SessionAuthentication]
-    #permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
 
 # Order Item ViewSet

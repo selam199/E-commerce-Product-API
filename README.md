@@ -105,5 +105,22 @@ The E-commerce Product API is designed to manage products on an e-commerce platf
    3.GET /api/order-items/{id}/: Retrieve details of a specific order item.
    4.PUT /api/order-items/{id}/: Update a specific order item.
    5.DELETE /api/order-items/{id}/: Delete a specific order item. 
+
+# Pagination  
+To limit the number of results per page, use the ?page parameter:  
+   1.GET /api/products/?page=1 → Returns the first page  
+   2.GET /api/products/?page=2` → Returns the second page   
+# Filtering  
+You can filter products using query parameters:  
+   1.Filter by category:  
+        .GET /api/products/?categories=Electronics  
+   2.Filter by price range:  
+        .GET /api/products/?min_price=100&max_price=500
+# Searching by Name & Description
+   1.GET /api/products/?search=phone
+   2.GET /api/products/?search=laptop
+# Ordering by Price & Creation Date
+   1.GET /api/products/?ordering=price  # Ascending
+   2.GET /api/products/?ordering=-price  # Descending
 #### **Links**
     [GitHub] (https://github.com/selam199/E-commerce-Product-API.git)

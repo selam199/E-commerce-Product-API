@@ -9,7 +9,7 @@ class ProductFilter(django_filters.FilterSet):
 
     class Meta:
         model = Product
-        fields = ['category', 'price_min', 'price_max', 'stock_available']
+        fields = ['category', 'price_min', 'price_max', 'stock_available','name','description','created_by','price']
 
     def filter_stock(self, queryset, name, value):
         if value:
