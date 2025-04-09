@@ -7,11 +7,12 @@ from .models import Product, Category,Cart, CartItem, Order, OrderItem
 from .serializers import ProductSerializer, CategorySerializer, UserSerializer, RegisterSerializer,CartSerializer, CartItemSerializer, OrderSerializer, OrderItemSerializer
 from django.contrib.auth.models import User
 from rest_framework.views import APIView
-from rest_framework.authentication import SessionAuthentication
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from django_filters.rest_framework import DjangoFilterBackend
 from .filters import ProductFilter
 from rest_framework.filters import SearchFilter,OrderingFilter
-from .pagination import ProductPagination  # Import custom pagination
+from .pagination import ProductPagination  # Import custom pagination class
+from rest_framework.authtoken.models import Token
 
 
 
@@ -25,7 +26,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     pagination_class = ProductPagination  # Apply pagination
     search_fields = ['name','description']
     ordering_fields = ['price', 'created_by']  # Enable sorting by price and creation date
-    authentication_classes = [SessionAuthentication]
+    authentication_classes = [SessionAuthentication,TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     
     def get_queryset(self):
@@ -37,7 +38,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    authentication_classes = [SessionAuthentication]
+    authentication_classes = [SessionAuthentication,TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
@@ -49,7 +50,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    authentication_classes = [SessionAuthentication]
+    authentication_classes = [SessionAuthentication,TokenAuthentication]
     permission_classes = [IsAuthenticated] 
 # Register API Methods
 class RegisterView(APIView):
@@ -58,15 +59,33 @@ class RegisterView(APIView):
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response({'message': 'User registered successfully'}, status=status.HTTP_201_CREATED)
+            user= serializer.save()
+            # Create Token For the new user
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({
+                "user": serializer.data,
+                "token": token.key
+            }, status=status.HTTP_201_CREATED )    
+        #return Response({'message': 'User registered successfully'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        # For Token Authentication: Delete the token from the DB
+        if request.user.auth_token:
+            request.user.auth_token.delete()
+
+        # For Session Authentication: Flush the session (logout the user)
+        request.session.flush()
+
+        return Response({"message": "Successfully logged out."})   
 # Cart ViewSet
 class CartViewSet(viewsets.ModelViewSet):
     queryset = Cart.objects.all()
     serializer_class = CartSerializer
-    authentication_classes = [SessionAuthentication]
+    authentication_classes = [SessionAuthentication,TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
 
@@ -74,7 +93,7 @@ class CartViewSet(viewsets.ModelViewSet):
 class CartItemViewSet(viewsets.ModelViewSet):
     queryset = CartItem.objects.all()
     serializer_class = CartItemSerializer
-    authentication_classes = [SessionAuthentication]
+    authentication_classes = [SessionAuthentication,TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
 
@@ -82,7 +101,7 @@ class CartItemViewSet(viewsets.ModelViewSet):
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
-    authentication_classes = [SessionAuthentication]
+    authentication_classes = [SessionAuthentication,TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
 
@@ -90,5 +109,5 @@ class OrderViewSet(viewsets.ModelViewSet):
 class OrderItemViewSet(viewsets.ModelViewSet):
     queryset = OrderItem.objects.all()
     serializer_class = OrderItemSerializer
-    authentication_classes = [SessionAuthentication]
+    authentication_classes = [SessionAuthentication,TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]

@@ -45,10 +45,12 @@ INSTALLED_APPS = [
     'products',
     'rest_framework',
     'django_filters',
+    'rest_framework.authtoken',
 ]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',  # Session-based login
     ],
     'DEFAULT_PERMISSION_CLASSES': [

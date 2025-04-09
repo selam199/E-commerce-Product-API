@@ -17,10 +17,16 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='products')
-    stock_quantity = models.PositiveIntegerField()
+    stock_quantity = models.PositiveIntegerField(default=0)
     image_url = models.URLField(max_length=255, blank=True, null=True)
     created_date = models.DateTimeField(auto_now_add=True)
     
+    def reduce_stock(self, quantity):
+        """Reduce stock quantity when an order is placed"""
+        if quantity > self.stock_quantity:
+            raise ValueError("Not enough stock available.")
+        self.stock_quantity -= quantity
+        self.save()
 
     def __str__(self):
         return self.name
@@ -57,4 +63,11 @@ class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
     quantity = models.PositiveIntegerField()
+    
+    def save(self, *args, **kwargs):
+        """Reduce stock when an order item is saved"""
+        if self.quantity > self.product.stock_quantity:
+            raise ValueError("Not enough stock available.")
+        self.product.reduce_stock(self.quantity)
+        super().save(*args, **kwargs)
     
